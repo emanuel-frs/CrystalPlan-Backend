@@ -12,31 +12,50 @@ import java.util.List;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-    private final NotificationSettingsRepository settingsRepo;
-    private final NotificationLogRepository logRepo;
+    private final NotificationSettingsRepository settingsRepository;
+    private final NotificationLogRepository logRepository;
 
-    public NotificationServiceImpl(NotificationSettingsRepository settingsRepo, NotificationLogRepository logRepo) {
-        this.settingsRepo = settingsRepo;
-        this.logRepo = logRepo;
+    public NotificationServiceImpl(NotificationSettingsRepository settingsRepository,
+                                   NotificationLogRepository logRepository) {
+        this.settingsRepository = settingsRepository;
+        this.logRepository = logRepository;
+    }
+
+    // =========================
+    // Settings
+    // =========================
+
+    @Override
+    public NotificationSettings getUserSettings(String userId) {
+        return settingsRepository.findByUserId(userId).orElse(null);
     }
 
     @Override
-    public NotificationSettings getSettings(String userId) {
-        return settingsRepo.findByUserId(userId).orElse(null);
+    public NotificationSettings updateUserSettings(NotificationSettings settings) {
+        return settingsRepository.save(settings);
+    }
+
+    // =========================
+    // Logs
+    // =========================
+
+    @Override
+    public void saveNotificationLog(NotificationLog log) {
+        logRepository.save(log);
     }
 
     @Override
-    public NotificationSettings saveSettings(NotificationSettings settings) {
-        return settingsRepo.save(settings);
+    public List<NotificationLog> getNotificationLogsByUserId(String userId) {
+        return logRepository.findByUserId(userId);
     }
 
     @Override
-    public void logNotification(NotificationLog log) {
-        logRepo.save(log);
+    public NotificationLog getNotificationLogById(String logId) {
+        return logRepository.findById(logId).orElse(null);
     }
 
     @Override
-    public List<NotificationLog> getLogs(String userId) {
-        return logRepo.findByUserId(userId);
+    public List<NotificationLog> getLogsByEventId(String eventId) {
+        return logRepository.findByEventId(eventId);
     }
 }

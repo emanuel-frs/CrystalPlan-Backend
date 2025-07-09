@@ -1,6 +1,6 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.application.dtos.LoginRequest;
+import com.project.crystalplan.presentation.dtos.LoginRequest;
 import com.project.crystalplan.application.services.UserService;
 import com.project.crystalplan.domain.models.User;
 import jakarta.validation.Valid;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController

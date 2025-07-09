@@ -6,8 +6,14 @@ import com.project.crystalplan.domain.models.NotificationLog;
 import java.util.List;
 
 public interface NotificationService {
-    NotificationSettings getSettings(String userId);
-    NotificationSettings saveSettings(NotificationSettings settings);
-    void logNotification(NotificationLog log);
-    List<NotificationLog> getLogs(String userId);
+
+    // Settings
+    NotificationSettings getUserSettings(String userId);
+    NotificationSettings updateUserSettings(NotificationSettings settings);
+
+    // Logs
+    void saveNotificationLog(NotificationLog log);
+    List<NotificationLog> getNotificationLogsByUserId(String userId);
+    NotificationLog getNotificationLogById(String logId);
+    List<NotificationLog> getLogsByEventId(String eventId);
 }

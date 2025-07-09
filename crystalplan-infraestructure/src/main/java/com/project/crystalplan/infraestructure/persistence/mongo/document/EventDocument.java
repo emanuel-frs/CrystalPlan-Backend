@@ -19,7 +19,6 @@ import java.util.UUID;
 public class EventDocument {
     @Id
     private String id = UUID.randomUUID().toString();
-
     private String title;
     private String description;
     private Recurrence recurrence;

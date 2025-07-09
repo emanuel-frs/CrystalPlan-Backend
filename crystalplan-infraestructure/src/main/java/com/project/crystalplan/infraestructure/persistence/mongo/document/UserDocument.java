@@ -14,11 +14,8 @@ import java.util.UUID;
 public class UserDocument {
     @Id
     private String id = UUID.randomUUID().toString();
-
     private String name;
-
     @Indexed(unique = true)
     private String email;
-
     private String password;
 }
