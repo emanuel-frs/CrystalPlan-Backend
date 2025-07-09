@@ -1,0 +1,7 @@
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/dtos/LoginRequest.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/EventService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/NotificationService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/UserService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/impl/EventServiceImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/impl/NotificationServiceImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-application/src/main/java/com/project/crystalplan/application/services/impl/UserServiceImpl.java
