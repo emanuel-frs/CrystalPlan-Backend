@@ -2,16 +2,16 @@ package com.project.crystalplan.application.services.impl;
 
 import com.project.crystalplan.application.services.EventService;
 import com.project.crystalplan.domain.enums.Recurrence;
+import com.project.crystalplan.domain.exceptions.EntityNotFoundException;
+import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
 import com.project.crystalplan.domain.models.Event;
 import com.project.crystalplan.domain.repositories.EventRepository;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -29,16 +29,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event updateEvent(String id, Event updatedEvent) {
         Event existing = eventRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Evento não encontrado"));
-
-        updatedEvent.setId(id); // Garante que estamos atualizando o mesmo ID
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado"));
+        updatedEvent.setId(id);
         validateEventRecurrence(updatedEvent);
         return eventRepository.save(updatedEvent);
     }
 
     @Override
     public Optional<Event> getEventById(String id) {
-        return eventRepository.findById(id);
+        return Optional.ofNullable(eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado")));
     }
 
     @Override
@@ -68,22 +68,22 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findByUserIdAndRecurrenceAndEventDateBetween(userId, Recurrence.SINGLE, start, end);
     }
 
-    private void validateEventRecurrence(Event event) {
-        if (event.getRecurrence() == Recurrence.SINGLE && event.getEventDate() == null) {
-            throw new ValidationException("Data do evento é obrigatória para recorrência SINGLE");
-        }
-
-        if (event.getRecurrence() == Recurrence.WEEKLY && (event.getDaysOfWeek() == null || event.getDaysOfWeek().isEmpty())) {
-            throw new ValidationException("Pelo menos um dia da semana é obrigatório para recorrência WEEKLY");
-        }
-    }
-
     @Override
     public void deleteEvent(String id) {
         if (!eventRepository.existsById(id)) {
-            throw new NoSuchElementException("Evento não encontrado");
+            throw new EntityNotFoundException("Evento não encontrado");
         }
         eventRepository.deleteById(id);
     }
-}
 
+    private void validateEventRecurrence(Event event) {
+        if (event.getRecurrence() == Recurrence.SINGLE && event.getEventDate() == null) {
+            throw new InvalidArgumentException("Data do evento é obrigatória para recorrência SINGLE");
+        }
+
+        if (event.getRecurrence() == Recurrence.WEEKLY &&
+                (event.getDaysOfWeek() == null || event.getDaysOfWeek().isEmpty())) {
+            throw new InvalidArgumentException("Pelo menos um dia da semana é obrigatório para recorrência WEEKLY");
+        }
+    }
+}

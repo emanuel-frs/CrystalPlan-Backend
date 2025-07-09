@@ -1,6 +1,9 @@
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/enums/NotificationStatus.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/enums/NotificationType.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/enums/Recurrence.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/exceptions/BusinessRuleException.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/exceptions/EntityNotFoundException.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/exceptions/InvalidArgumentException.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/models/Event.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/models/NotificationLog.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/models/NotificationSettings.java

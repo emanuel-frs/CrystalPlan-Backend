@@ -1,15 +1,15 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.presentation.dtos.LoginRequest;
 import com.project.crystalplan.application.services.UserService;
 import com.project.crystalplan.domain.models.User;
+import com.project.crystalplan.presentation.dtos.LoginRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,43 +27,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable String id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Optional<User>> getById(@PathVariable String id) {
+        Optional<User> user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Optional<User>> getByEmail(@PathVariable String email) {
+        Optional<User> user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable String id, @Valid @RequestBody User user) {
-        try {
-            User updated = userService.updateUser(id, user);
-            return ResponseEntity.ok(updated);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        User updated = userService.updateUser(id, user);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@Valid @RequestBody LoginRequest request) {
-        return userService.login(request.getEmail(), request.getPassword())
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(401).build());
+    public ResponseEntity<Optional<User>> login(@Valid @RequestBody LoginRequest request) {
+        Optional<User> user = userService.login(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(user);
     }
 }

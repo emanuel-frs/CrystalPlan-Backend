@@ -1,25 +1,22 @@
 package com.project.crystalplan.application.services.impl;
 
+import com.project.crystalplan.application.services.NotificationService;
+import com.project.crystalplan.domain.exceptions.EntityNotFoundException;
 import com.project.crystalplan.domain.models.NotificationLog;
 import com.project.crystalplan.domain.models.NotificationSettings;
 import com.project.crystalplan.domain.repositories.NotificationLogRepository;
 import com.project.crystalplan.domain.repositories.NotificationSettingsRepository;
-import com.project.crystalplan.application.services.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationSettingsRepository settingsRepository;
     private final NotificationLogRepository logRepository;
-
-    public NotificationServiceImpl(NotificationSettingsRepository settingsRepository,
-                                   NotificationLogRepository logRepository) {
-        this.settingsRepository = settingsRepository;
-        this.logRepository = logRepository;
-    }
 
     // =========================
     // Settings
@@ -27,7 +24,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationSettings getUserSettings(String userId) {
-        return settingsRepository.findByUserId(userId).orElse(null);
+        return settingsRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Configuração de notificação não encontrada para o usuário: " + userId));
     }
 
     @Override
@@ -51,7 +49,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationLog getNotificationLogById(String logId) {
-        return logRepository.findById(logId).orElse(null);
+        return logRepository.findById(logId)
+                .orElseThrow(() -> new EntityNotFoundException("Log de notificação não encontrado com ID: " + logId));
     }
 
     @Override
