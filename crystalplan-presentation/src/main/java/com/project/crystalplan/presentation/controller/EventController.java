@@ -1,6 +1,6 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.application.services.EventService;
+import com.project.crystalplan.domain.services.EventService;
 import com.project.crystalplan.domain.models.Event;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

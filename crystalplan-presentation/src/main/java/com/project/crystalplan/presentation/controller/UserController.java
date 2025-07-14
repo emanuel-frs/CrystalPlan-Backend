@@ -1,6 +1,6 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.application.services.UserService;
+import com.project.crystalplan.domain.services.UserService;
 import com.project.crystalplan.domain.models.User;
 import com.project.crystalplan.presentation.dtos.LoginRequest;
 import jakarta.validation.Valid;

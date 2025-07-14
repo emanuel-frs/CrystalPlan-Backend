@@ -1,6 +1,6 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.application.services.NotificationService;
+import com.project.crystalplan.domain.services.NotificationService;
 import com.project.crystalplan.domain.models.NotificationLog;
 import com.project.crystalplan.domain.models.NotificationSettings;
 import jakarta.validation.Valid;

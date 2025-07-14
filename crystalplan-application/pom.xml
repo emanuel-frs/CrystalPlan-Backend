@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>com.project</groupId>
-            <artifactId>crystalplan-infraestructure</artifactId>
+            <artifactId>crystalplan-infrastructure</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

@@ -1,0 +1,16 @@
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/document/EventDocument.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/document/NotificationLogDocument.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/document/NotificationSettingsDocument.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/document/UserDocument.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/mapper/EventMapper.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/mapper/NotificationLogMapper.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/mapper/NotificationSettingsMapper.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/mapper/UserMapper.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/EventRepositoryImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationLogRepositoryImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationSettingsRepositoryImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/UserRepositoryImpl.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataEventMongoRepository.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataNotificationLogMongoRepository.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataNotificationSettingsMongoRepository.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataUserMongoRepository.java
