@@ -1,0 +1,4 @@
+com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationSettingsRepositoryImplTest.class
+com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/UserRepositoryImplTest.class
+com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationLogRepositoryImplTest.class
+com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/EventRepositoryImplTest.class
