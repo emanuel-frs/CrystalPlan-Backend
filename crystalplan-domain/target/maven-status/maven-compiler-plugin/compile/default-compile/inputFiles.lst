@@ -12,3 +12,6 @@
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/repositories/NotificationLogRepository.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/repositories/NotificationSettingsRepository.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/repositories/UserRepository.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/services/EventService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/services/NotificationService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-domain/src/main/java/com/project/crystalplan/domain/services/UserService.java

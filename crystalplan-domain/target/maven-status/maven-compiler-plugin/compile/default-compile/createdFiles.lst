@@ -1,7 +1,10 @@
+com/project/crystalplan/domain/services/NotificationService.class
 com/project/crystalplan/domain/models/NotificationLog.class
 com/project/crystalplan/domain/models/Event.class
+com/project/crystalplan/domain/services/EventService.class
 com/project/crystalplan/domain/enums/NotificationStatus.class
 com/project/crystalplan/domain/exceptions/InvalidArgumentException.class
+com/project/crystalplan/domain/services/UserService.class
 com/project/crystalplan/domain/repositories/NotificationSettingsRepository.class
 com/project/crystalplan/domain/enums/Recurrence.class
 com/project/crystalplan/domain/repositories/NotificationLogRepository.class
