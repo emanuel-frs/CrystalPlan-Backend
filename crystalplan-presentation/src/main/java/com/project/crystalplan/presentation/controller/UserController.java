@@ -1,7 +1,7 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.domain.services.UserService;
 import com.project.crystalplan.domain.models.User;
+import com.project.crystalplan.domain.services.UserService;
 import com.project.crystalplan.presentation.dtos.LoginRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,21 +26,21 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getById(@PathVariable String id) {
-        Optional<User> user = userService.getUserById(id);
+    public ResponseEntity<User> getById(@PathVariable String id) {
+        User user = userService.getUserById(id).orElseThrow();
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Optional<User>> getByEmail(@PathVariable String email) {
-        Optional<User> user = userService.getUserByEmail(email);
+    public ResponseEntity<User> getByEmail(@PathVariable String email) {
+        User user = userService.getUserByEmail(email).orElseThrow();
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable String id, @Valid @RequestBody User user) {
-        User updated = userService.updateUser(id, user);
-        return ResponseEntity.ok(updated);
+        User updatedUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
@@ -51,8 +50,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Optional<User>> login(@Valid @RequestBody LoginRequest request) {
-        Optional<User> user = userService.login(request.getEmail(), request.getPassword());
+    public ResponseEntity<User> login(@Valid @RequestBody LoginRequest request) {
+        User user = userService.login(request.getEmail(), request.getPassword()).orElseThrow();
         return ResponseEntity.ok(user);
     }
 }

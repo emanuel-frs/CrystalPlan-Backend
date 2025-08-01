@@ -5,6 +5,7 @@ com/project/crystalplan/infrastructure/persistence/mongo/document/EventDocument.
 com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataNotificationSettingsMongoRepository.class
 com/project/crystalplan/infrastructure/persistence/mongo/mapper/UserMapper.class
 com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationSettingsRepositoryImpl.class
+com/project/crystalplan/infrastructure/persistence/mongo/document/EventDocument$EventDocumentBuilder.class
 com/project/crystalplan/infrastructure/persistence/mongo/repository/impl/NotificationLogRepositoryImpl.class
 com/project/crystalplan/infrastructure/persistence/mongo/mapper/NotificationSettingsMapper.class
 com/project/crystalplan/infrastructure/persistence/mongo/document/NotificationSettingsDocument.class

@@ -1,7 +1,7 @@
 package com.project.crystalplan.infrastructure.persistence.mongo.repository.impl;
 
 import com.project.crystalplan.domain.enums.NotificationStatus;
-import com.project.crystalplan.domain.enums.NotificationType; // Importar NotificationType
+import com.project.crystalplan.domain.enums.NotificationType;
 import com.project.crystalplan.domain.models.NotificationLog;
 import com.project.crystalplan.infrastructure.persistence.mongo.document.NotificationLogDocument;
 import com.project.crystalplan.infrastructure.persistence.mongo.mapper.NotificationLogMapper;
@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant; // Usar Instant
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,24 +41,21 @@ class NotificationLogRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializa os objetos de exemplo com a estrutura EXATA do seu NotificationLog model
         sampleLog = new NotificationLog(
                 "log-id-1",
                 sampleEventId,
                 sampleUserId,
-                NotificationType.EMAIL, // Usando o enum NotificationType
-                Instant.now(), // Usando Instant
-                NotificationStatus.SENDED
+                NotificationType.EMAIL,
+                Instant.now(),
+                NotificationStatus.SANDED
         );
-        // Você precisará garantir que seu NotificationLogDocument tenha um construtor ou setters
-        // que correspondam a esta nova estrutura do modelo.
         sampleLogDocument = new NotificationLogDocument(
                 "log-id-1",
                 sampleEventId,
                 sampleUserId,
                 NotificationType.EMAIL,
                 Instant.now(),
-                NotificationStatus.SENDED
+                NotificationStatus.SANDED
         );
     }
 
@@ -160,9 +157,8 @@ class NotificationLogRepositoryImplTest {
     @Test
     void findByStatus_ShouldReturnListOfNotificationLogs() {
         NotificationStatus status = NotificationStatus.SUCCESS;
-        // Criar um log de amostra com o status SUCCESS para este teste
         NotificationLog successLog = new NotificationLog(
-                "log-id-2", sampleEventId, sampleUserId, NotificationType.VISUAL, // Usando outro NotificationType
+                "log-id-2", sampleEventId, sampleUserId, NotificationType.VISUAL,
                 Instant.now(), status
         );
         NotificationLogDocument successLogDoc = new NotificationLogDocument(

@@ -2,9 +2,9 @@ package com.project.crystalplan.infrastructure.persistence.mongo.repository.impl
 
 import com.project.crystalplan.domain.models.User;
 import com.project.crystalplan.domain.repositories.UserRepository;
-import com.project.crystalplan.infrastructure.persistence.mongo.repository.springdata.SpringDataUserMongoRepository;
 import com.project.crystalplan.infrastructure.persistence.mongo.document.UserDocument;
 import com.project.crystalplan.infrastructure.persistence.mongo.mapper.UserMapper;
+import com.project.crystalplan.infrastructure.persistence.mongo.repository.springdata.SpringDataUserMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +24,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        UserDocument doc = mapper.toDocument(user);
-        return mapper.toDomain(springDataRepo.save(doc));
+        UserDocument savedDoc = springDataRepo.save(mapper.toDocument(user));
+        return mapper.toDomain(savedDoc);
     }
 
     @Override
@@ -34,8 +34,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByIdAndActiveTrue(String id) {
+        return springDataRepo.findByIdAndActiveTrue(id).map(mapper::toDomain);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         return springDataRepo.findByEmail(email).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<User> findByEmailAndActiveTrue(String email) {
+        return springDataRepo.findByEmailAndActiveTrue(email).map(mapper::toDomain);
     }
 
     @Override
@@ -53,4 +63,3 @@ public class UserRepositoryImpl implements UserRepository {
         return springDataRepo.existsById(id);
     }
 }
-

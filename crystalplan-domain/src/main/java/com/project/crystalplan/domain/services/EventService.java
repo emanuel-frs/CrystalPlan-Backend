@@ -19,4 +19,3 @@ public interface EventService {
     List<Event> getAllSingleEventsByMonth(String userId, int year, int month);
     List<Event> getWeeklyEventsByDayOfWeek(String userId, DayOfWeek dayOfWeek);
 }
-

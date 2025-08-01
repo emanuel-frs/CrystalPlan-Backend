@@ -1,7 +1,7 @@
 package com.project.crystalplan.presentation.controller;
 
-import com.project.crystalplan.domain.services.EventService;
 import com.project.crystalplan.domain.models.Event;
+import com.project.crystalplan.domain.services.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +12,6 @@ import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/events")
@@ -29,37 +28,34 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Event>> getById(@PathVariable String id) {
-        Optional<Event> event = eventService.getEventById(id);
+    public ResponseEntity<Event> getById(@PathVariable String id) {
+        Event event = eventService.getEventById(id)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
         return ResponseEntity.ok(event);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Event>> getAllByUser(@PathVariable String userId) {
-        List<Event> events = eventService.getAllEventsByUser(userId);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getAllEventsByUser(userId));
     }
 
     @GetMapping("/user/{userId}/date/{date}")
     public ResponseEntity<List<Event>> getSingleEventsByDate(
             @PathVariable String userId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<Event> events = eventService.getSingleEventsByDate(userId, date);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getSingleEventsByDate(userId, date));
     }
 
     @GetMapping("/user/{userId}/day/{dayOfWeek}")
     public ResponseEntity<List<Event>> getWeeklyEventsByDayOfWeek(
             @PathVariable String userId,
             @PathVariable DayOfWeek dayOfWeek) {
-        List<Event> events = eventService.getWeeklyEventsByDayOfWeek(userId, dayOfWeek);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getWeeklyEventsByDayOfWeek(userId, dayOfWeek));
     }
 
     @GetMapping("/user/{userId}/weekly")
     public ResponseEntity<List<Event>> getAllWeeklyEvents(@PathVariable String userId) {
-        List<Event> events = eventService.getAllWeeklyEventsByUser(userId);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getAllWeeklyEventsByUser(userId));
     }
 
     @GetMapping("/user/{userId}/single/month/{year}/{month}")
@@ -67,8 +63,7 @@ public class EventController {
             @PathVariable String userId,
             @PathVariable int year,
             @PathVariable int month) {
-        List<Event> events = eventService.getAllSingleEventsByMonth(userId, year, month);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(eventService.getAllSingleEventsByMonth(userId, year, month));
     }
 
     @PutMapping("/{id}")

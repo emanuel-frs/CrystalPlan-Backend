@@ -1,6 +1,6 @@
 package com.project.crystalplan.infrastructure.persistence.mongo.repository.impl;
 
-import com.project.crystalplan.domain.enums.NotificationType; // Importa NotificationType
+import com.project.crystalplan.domain.enums.NotificationType;
 import com.project.crystalplan.domain.enums.Recurrence;
 import com.project.crystalplan.domain.models.Event;
 import com.project.crystalplan.infrastructure.persistence.mongo.document.EventDocument;
@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,9 +46,8 @@ class EventRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        // Inicialização completa do Event com todos os campos
         Set<DayOfWeek> emptyDays = Collections.emptySet();
-        NotificationType defaultNotificationType = NotificationType.EMAIL; // *** ALTERADO AQUI ***
+        NotificationType defaultNotificationType = NotificationType.EMAIL;
 
         sampleEvent = new Event(
                 "event-id-1",
@@ -61,20 +62,24 @@ class EventRepositoryImplTest {
                 defaultNotificationType,
                 sampleUserId
         );
-        // Assumindo que EventDocument tem um construtor similar ou setters
-        sampleEventDocument = new EventDocument(
-                "event-id-1",
-                "Meeting",
-                "Team sync up",
-                Recurrence.SINGLE,
-                LocalDate.of(2025, 8, 1),
-                emptyDays,
-                LocalTime.of(10, 0),
-                LocalTime.of(9, 45),
-                true,
-                defaultNotificationType,
-                sampleUserId
-        );
+
+        sampleEventDocument = EventDocument.builder()
+                .id("event-id-1")
+                .uuid(UUID.randomUUID().toString()) // Gerando um UUID aleatório para o teste
+                .title("Meeting")
+                .description("Team sync up")
+                .recurrence(Recurrence.SINGLE)
+                .eventDate(LocalDate.of(2025, 8, 1))
+                .daysOfWeek(emptyDays)
+                .eventTime(LocalTime.of(10, 0))
+                .reminderTime(LocalTime.of(9, 45))
+                .notify(true)
+                .notificationType(defaultNotificationType)
+                .userId(sampleUserId)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .active(true)
+                .build();
     }
 
     @Test
@@ -172,16 +177,28 @@ class EventRepositoryImplTest {
 
         Event eventForTest = new Event(
                 "event-id-2", "Weekly Meeting", "Weekly team sync",
-                Recurrence.WEEKLY, // Usar Weekly aqui se este for um evento semanal
+                Recurrence.WEEKLY,
                 null, specificDays, LocalTime.of(9,0), LocalTime.of(8,45),
-                true, NotificationType.EMAIL, sampleUserId // *** ALTERADO AQUI ***
+                true, NotificationType.EMAIL, sampleUserId
         );
-        EventDocument docForTest = new EventDocument(
-                "event-id-2", "Weekly Meeting", "Weekly team sync",
-                Recurrence.WEEKLY, // Usar Weekly aqui se este for um evento semanal
-                null, specificDays, LocalTime.of(9,0), LocalTime.of(8,45),
-                true, NotificationType.EMAIL, sampleUserId // *** ALTERADO AQUI ***
-        );
+        EventDocument docForTest = EventDocument.builder()
+                .id("event-id-2")
+                .uuid(UUID.randomUUID().toString())
+                .title("Weekly Meeting")
+                .description("Weekly team sync")
+                .recurrence(Recurrence.WEEKLY)
+                .eventDate(null)
+                .daysOfWeek(specificDays)
+                .eventTime(LocalTime.of(9,0))
+                .reminderTime(LocalTime.of(8,45))
+                .notify(true)
+                .notificationType(NotificationType.EMAIL)
+                .userId(sampleUserId)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .active(true)
+                .build();
+
 
         List<EventDocument> eventDocuments = Collections.singletonList(docForTest);
         List<Event> expectedEvents = Collections.singletonList(eventForTest);
