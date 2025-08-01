@@ -2,7 +2,6 @@ package com.project.crystalplan.domain.services;
 
 import com.project.crystalplan.domain.models.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserService {

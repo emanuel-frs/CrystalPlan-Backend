@@ -2,13 +2,14 @@ package com.project.crystalplan.domain.models;
 
 import com.project.crystalplan.domain.enums.NotificationType;
 import com.project.crystalplan.domain.enums.Recurrence;
+import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
-public class Event {
+public class Event extends BaseModel{
     private String id;
     private String title;
     private String description;
@@ -17,7 +18,7 @@ public class Event {
     private Set<DayOfWeek> daysOfWeek;
     private LocalTime eventTime;
     private LocalTime reminderTime;
-    private boolean notify;
+    private boolean notify = false;
     private NotificationType notificationType;
     private String userId;
 
@@ -37,6 +38,41 @@ public class Event {
         this.notify = notify;
         this.notificationType = notificationType;
         this.userId = userId;
+    }
+
+    public void validate() {
+        if (userId == null || userId.isBlank()) {
+            throw new InvalidArgumentException("userId é obrigatório");
+        }
+
+        if (recurrence == Recurrence.SINGLE) {
+            if (eventDate == null) {
+                throw new InvalidArgumentException("Data do evento é obrigatória para recorrência SINGLE");
+            }
+        }
+
+        if (recurrence == Recurrence.WEEKLY) {
+            if (daysOfWeek == null || daysOfWeek.isEmpty()) {
+                throw new InvalidArgumentException("Pelo menos um dia da semana é obrigatório para recorrência WEEKLY");
+            }
+            if (daysOfWeek.size() > 7) {
+                throw new InvalidArgumentException("daysOfWeek não pode ter mais de 7 dias");
+            }
+        }
+
+        if (notify) {
+            if (eventTime == null) {
+                throw new InvalidArgumentException("Horário do evento é obrigatório quando notify é true");
+            }
+            if (notificationType == null) {
+                throw new InvalidArgumentException("notificationType deve ser informado quando notify é true");
+            }
+            if (reminderTime == null) {
+                reminderTime = LocalTime.of(10, 0);
+            }
+        } else {
+            notificationType = null;
+        }
     }
 
     public String getId() { return id; }

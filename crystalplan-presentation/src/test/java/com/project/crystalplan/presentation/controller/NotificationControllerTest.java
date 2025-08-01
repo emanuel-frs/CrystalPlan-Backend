@@ -53,7 +53,7 @@ class NotificationControllerTest {
                 "settings-id-1", "user1", true, true, LocalTime.of(22, 0), LocalTime.of(7, 0), 15
         );
         sampleLog = new NotificationLog(
-                "log-id-1", "event1", "user1", NotificationType.EMAIL, Instant.now(), NotificationStatus.SENDED
+                "log-id-1", "event1", "user1", NotificationType.EMAIL, Instant.now(), NotificationStatus.SANDED
         );
     }
 
@@ -114,7 +114,7 @@ class NotificationControllerTest {
     @Test
     void shouldCreateNotificationLog() throws Exception {
         NotificationLog logToCreate = new NotificationLog(
-                "new-log-id", "event2", "user1", NotificationType.VISUAL, Instant.now(), NotificationStatus.SENDED
+                "new-log-id", "event2", "user1", NotificationType.VISUAL, Instant.now(), NotificationStatus.SANDED
         );
 
         // O serviço saveNotificationLog é void, então usamos doNothing
@@ -176,7 +176,7 @@ class NotificationControllerTest {
     @Test
     void shouldGetLogsByEventId() throws Exception {
         NotificationLog logForEvent1_2 = new NotificationLog(
-                "log-id-3", "event1", "user2", NotificationType.EMAIL, Instant.now().minusSeconds(100), NotificationStatus.SENDED
+                "log-id-3", "event1", "user2", NotificationType.EMAIL, Instant.now().minusSeconds(100), NotificationStatus.SANDED
         );
         List<NotificationLog> eventLogs = Arrays.asList(sampleLog, logForEvent1_2);
         when(notificationService.getLogsByEventId("event1")).thenReturn(eventLogs);

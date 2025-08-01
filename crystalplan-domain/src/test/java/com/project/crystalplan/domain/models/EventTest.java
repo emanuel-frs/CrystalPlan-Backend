@@ -2,6 +2,7 @@ package com.project.crystalplan.domain.models;
 
 import com.project.crystalplan.domain.enums.NotificationType;
 import com.project.crystalplan.domain.enums.Recurrence;
+import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
@@ -10,6 +11,7 @@ import java.time.LocalTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EventTest {
 
@@ -40,6 +42,11 @@ class EventTest {
         assertThat(event.isNotify()).isTrue();
         assertThat(event.getNotificationType()).isEqualTo(notificationType);
         assertThat(event.getUserId()).isEqualTo(userId);
+
+        assertThat(event.getUuid()).isNotNull();
+        assertThat(event.getCreatedAt()).isNotNull();
+        assertThat(event.getUpdatedAt()).isNotNull();
+        assertThat(event.isActive()).isTrue();
     }
 
     @Test
@@ -69,5 +76,85 @@ class EventTest {
         assertThat(event.isNotify()).isFalse();
         assertThat(event.getNotificationType()).isEqualTo(NotificationType.VISUAL);
         assertThat(event.getUserId()).isEqualTo("user-456");
+    }
+
+    @Test
+    void shouldThrowWhenRecurrenceIsSingleAndNoEventDate() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.SINGLE);
+        event.setNotify(false);
+        event.setUserId("user-789");
+
+        assertThatThrownBy(event::validate)
+                .isInstanceOf(InvalidArgumentException.class)
+                .hasMessageContaining("Data do evento é obrigatória para recorrência SINGLE");
+    }
+
+    @Test
+    void shouldThrowWhenRecurrenceIsWeeklyAndNoDaysOfWeek() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.WEEKLY);
+        event.setNotify(false);
+        event.setUserId("user-789");
+
+        assertThatThrownBy(event::validate)
+                .isInstanceOf(InvalidArgumentException.class)
+                .hasMessageContaining("Pelo menos um dia da semana é obrigatório para recorrência WEEKLY");
+    }
+
+    @Test
+    void shouldThrowWhenNotifyIsTrueAndNoEventTime() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.SINGLE);
+        event.setEventDate(LocalDate.now());
+        event.setNotify(true);
+        event.setUserId("user-789");
+
+        assertThatThrownBy(event::validate)
+                .isInstanceOf(InvalidArgumentException.class)
+                .hasMessageContaining("Horário do evento é obrigatório quando notify é true");
+    }
+
+    @Test
+    void shouldThrowWhenNotifyIsTrueAndNotificationTypeNull() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.SINGLE);
+        event.setEventDate(LocalDate.now());
+        event.setEventTime(LocalTime.NOON);
+        event.setNotify(true);
+        event.setUserId("user-789");
+
+        assertThatThrownBy(event::validate)
+                .isInstanceOf(InvalidArgumentException.class)
+                .hasMessageContaining("notificationType deve ser informado quando notify é true");
+    }
+
+    @Test
+    void shouldSetReminderTimeToDefaultWhenNotifyTrueAndReminderTimeNull() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.SINGLE);
+        event.setEventDate(LocalDate.now());
+        event.setEventTime(LocalTime.NOON);
+        event.setNotify(true);
+        event.setNotificationType(NotificationType.EMAIL);
+        event.setUserId("user-789");
+
+        event.validate();
+
+        assertThat(event.getReminderTime()).isEqualTo(LocalTime.of(10, 0));
+    }
+
+    @Test
+    void shouldThrowWhenUserIdIsNullOrEmpty() {
+        Event event = new Event();
+        event.setRecurrence(Recurrence.SINGLE);
+        event.setEventDate(LocalDate.now());
+        event.setEventTime(LocalTime.NOON);
+        event.setNotify(false);
+        event.setUserId(null);
+
+        assertThatThrownBy(event::validate)
+                .isInstanceOf(InvalidArgumentException.class)
+                .hasMessageContaining("userId é obrigatório");
     }
 }

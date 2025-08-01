@@ -41,16 +41,28 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Para lidar com tipos de data/hora se o User tiver
+        objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        sampleUser = new User("user-id-1", "John Doe", "john.doe@example.com", "password123");
+        sampleUser = new User();
+        sampleUser.setId("user-id-1");
+        sampleUser.setName("John Doe");
+        sampleUser.setEmail("john.doe@example.com");
+        sampleUser.setPassword("password123");
     }
 
     @Test
     void shouldCreateUser() throws Exception {
-        User userToCreate = new User(null, "New User", "new.user@example.com", "newpass");
-        User createdUser = new User("new-user-id", "New User", "new.user@example.com", "newpass");
+        User userToCreate = new User();
+        userToCreate.setName("New User");
+        userToCreate.setEmail("new.user@example.com");
+        userToCreate.setPassword("newpass");
+
+        User createdUser = new User();
+        createdUser.setId("new-user-id");
+        createdUser.setName("New User");
+        createdUser.setEmail("new.user@example.com");
+        createdUser.setPassword("newpass");
 
         when(userService.createUser(any(User.class))).thenReturn(createdUser);
 
@@ -66,8 +78,11 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldReturnConflictWhenCreatingUserWithExistingEmail() throws Exception {
-        User userWithExistingEmail = new User(null, "Existing User", "john.doe@example.com", "pass");
+    void shouldReturnBadRequestWhenCreatingUserWithExistingEmail() throws Exception {
+        User userWithExistingEmail = new User();
+        userWithExistingEmail.setName("Existing User");
+        userWithExistingEmail.setEmail("john.doe@example.com");
+        userWithExistingEmail.setPassword("pass");
 
         when(userService.createUser(any(User.class)))
                 .thenThrow(new InvalidArgumentException("Já existe um usuário com este e-mail."));
@@ -75,7 +90,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userWithExistingEmail)))
-                .andExpect(status().isBadRequest()); // Ou 409 Conflict, dependendo da sua ExceptionHandler
+                .andExpect(status().isBadRequest());
 
         verify(userService, times(1)).createUser(any(User.class));
     }
@@ -129,12 +144,13 @@ class UserControllerTest {
         verify(userService, times(1)).getUserByEmail("nonexistent@example.com");
     }
 
-
     @Test
     void shouldUpdateUser() throws Exception {
-        User updatedUserDetails = new User(
-                "user-id-1", "Johnathan Doe", "john.doe.updated@example.com", "newsecurepass"
-        );
+        User updatedUserDetails = new User();
+        updatedUserDetails.setId("user-id-1");
+        updatedUserDetails.setName("Johnathan Doe");
+        updatedUserDetails.setEmail("john.doe.updated@example.com");
+        updatedUserDetails.setPassword("newsecurepass");
 
         when(userService.updateUser(eq("user-id-1"), any(User.class))).thenReturn(updatedUserDetails);
 
@@ -150,7 +166,11 @@ class UserControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentUser() throws Exception {
-        User nonExistentUser = new User("non-existent-id", "Non Existent", "non@example.com", "pass");
+        User nonExistentUser = new User();
+        nonExistentUser.setId("non-existent-id");
+        nonExistentUser.setName("Non Existent");
+        nonExistentUser.setEmail("non@example.com");
+        nonExistentUser.setPassword("pass");
 
         when(userService.updateUser(eq("non-existent-id"), any(User.class)))
                 .thenThrow(new EntityNotFoundException("Usuário não encontrado"));
@@ -168,7 +188,7 @@ class UserControllerTest {
         doNothing().when(userService).deleteUser("user-id-1");
 
         mockMvc.perform(delete("/api/users/user-id-1"))
-                .andExpect(status().isNoContent()); // 204 No Content for successful deletion
+                .andExpect(status().isNoContent());
 
         verify(userService, times(1)).deleteUser("user-id-1");
     }

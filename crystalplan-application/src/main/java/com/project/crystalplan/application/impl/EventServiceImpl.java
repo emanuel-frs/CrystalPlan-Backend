@@ -1,18 +1,19 @@
 package com.project.crystalplan.application.impl;
 
-import com.project.crystalplan.domain.services.EventService;
 import com.project.crystalplan.domain.enums.Recurrence;
 import com.project.crystalplan.domain.exceptions.EntityNotFoundException;
-import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
 import com.project.crystalplan.domain.models.Event;
 import com.project.crystalplan.domain.repositories.EventRepository;
+import com.project.crystalplan.domain.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +23,34 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event createEvent(Event event) {
-        validateEventRecurrence(event);
+        event.setUuid(UUID.randomUUID().toString());
+        event.setCreatedAt(LocalDateTime.now());
+        event.setUpdatedAt(LocalDateTime.now());
+        event.setActive(true);
+
+        event.validate();
         return eventRepository.save(event);
     }
 
     @Override
     public Event updateEvent(String id, Event updatedEvent) {
-        Event existing = eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado"));
+        if (!eventRepository.existsById(id)) {
+            throw new EntityNotFoundException("Evento não encontrado");
+        }
+
         updatedEvent.setId(id);
-        validateEventRecurrence(updatedEvent);
+        updatedEvent.setUpdatedAt(LocalDateTime.now());
+
+        updatedEvent.validate();
         return eventRepository.save(updatedEvent);
     }
 
     @Override
     public Optional<Event> getEventById(String id) {
-        return Optional.ofNullable(eventRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado")));
+        return Optional.ofNullable(
+                eventRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado"))
+        );
     }
 
     @Override
@@ -74,16 +86,5 @@ public class EventServiceImpl implements EventService {
             throw new EntityNotFoundException("Evento não encontrado");
         }
         eventRepository.deleteById(id);
-    }
-
-    private void validateEventRecurrence(Event event) {
-        if (event.getRecurrence() == Recurrence.SINGLE && event.getEventDate() == null) {
-            throw new InvalidArgumentException("Data do evento é obrigatória para recorrência SINGLE");
-        }
-
-        if (event.getRecurrence() == Recurrence.WEEKLY &&
-                (event.getDaysOfWeek() == null || event.getDaysOfWeek().isEmpty())) {
-            throw new InvalidArgumentException("Pelo menos um dia da semana é obrigatório para recorrência WEEKLY");
-        }
     }
 }

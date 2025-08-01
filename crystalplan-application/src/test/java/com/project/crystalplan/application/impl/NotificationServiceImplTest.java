@@ -59,7 +59,7 @@ class NotificationServiceImplTest {
                 "user1",
                 NotificationType.EMAIL,
                 Instant.now(),
-                NotificationStatus.SENDED
+                NotificationStatus.SANDED
         );
     }
 
@@ -154,7 +154,7 @@ class NotificationServiceImplTest {
     @Test
     void shouldGetLogsByEventId() {
         NotificationLog logForEvent1_1 = new NotificationLog(
-                "log-e1-1", "event1", "user1", NotificationType.EMAIL, Instant.now(), NotificationStatus.SENDED
+                "log-e1-1", "event1", "user1", NotificationType.EMAIL, Instant.now(), NotificationStatus.SANDED
         );
         NotificationLog logForEvent1_2 = new NotificationLog(
                 "log-e1-2", "event1", "user1", NotificationType.VISUAL, Instant.now().plusSeconds(60), NotificationStatus.SUCCESS

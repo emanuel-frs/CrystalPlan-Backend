@@ -16,16 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,20 +43,19 @@ class EventServiceImplTest {
                 "Description",
                 Recurrence.SINGLE,
                 LocalDate.of(2025, 7, 30),
-                null, // daysOfWeek must be null for SINGLE
+                null,
                 LocalTime.of(10, 0),
                 LocalTime.of(9, 30),
                 true,
                 NotificationType.EMAIL,
                 "user1"
         );
-
         weeklyEvent = new Event(
                 "2",
                 "Weekly Event",
                 "Description",
                 Recurrence.WEEKLY,
-                null, // eventDate must be null for WEEKLY
+                null,
                 Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
                 LocalTime.of(15, 0),
                 LocalTime.of(14, 45),
@@ -73,52 +67,31 @@ class EventServiceImplTest {
 
     @Test
     void shouldCreateSingleEventSuccessfully() {
-        when(eventRepository.save(any(Event.class))).thenReturn(singleEvent);
+        when(eventRepository.save(any(Event.class))).thenAnswer(invocation -> {
+            Event e = invocation.getArgument(0);
+            return e;
+        });
 
-        Event createdEvent = eventService.createEvent(singleEvent);
+        Event created = eventService.createEvent(singleEvent);
 
-        assertThat(createdEvent).isEqualTo(singleEvent);
+        assertThat(created).isEqualTo(singleEvent);
+        assertThat(created.getUuid()).isNotNull();
+        assertThat(created.isActive()).isTrue();
+        assertThat(created.getCreatedAt()).isNotNull();
         verify(eventRepository, times(1)).save(singleEvent);
     }
 
     @Test
     void shouldCreateWeeklyEventSuccessfully() {
-        when(eventRepository.save(any(Event.class))).thenReturn(weeklyEvent);
+        when(eventRepository.save(any(Event.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Event createdEvent = eventService.createEvent(weeklyEvent);
+        Event created = eventService.createEvent(weeklyEvent);
 
-        assertThat(createdEvent).isEqualTo(weeklyEvent);
+        assertThat(created).isEqualTo(weeklyEvent);
+        assertThat(created.getUuid()).isNotNull();
+        assertThat(created.isActive()).isTrue();
+        assertThat(created.getCreatedAt()).isNotNull();
         verify(eventRepository, times(1)).save(weeklyEvent);
-    }
-
-    @Test
-    void shouldThrowInvalidArgumentExceptionWhenCreatingSingleEventWithoutDate() {
-        Event invalidSingleEvent = new Event(
-                "3", "Invalid Single Event", "Desc", Recurrence.SINGLE, null, null, null, null, false, null, "user2"
-        );
-
-        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalidSingleEvent));
-        verify(eventRepository, never()).save(any(Event.class));
-    }
-
-    @Test
-    void shouldThrowInvalidArgumentExceptionWhenCreatingWeeklyEventWithoutDaysOfWeek() {
-        Event invalidWeeklyEvent = new Event(
-                "4", "Invalid Weekly Event", "Desc", Recurrence.WEEKLY, null, null, null, null, false, null, "user2"
-        );
-
-        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalidWeeklyEvent));
-        verify(eventRepository, never()).save(any(Event.class));
-    }
-
-    @Test
-    void shouldThrowInvalidArgumentExceptionWhenCreatingWeeklyEventWithEmptyDaysOfWeek() {
-        Event invalidWeeklyEvent = new Event(
-                "5", "Invalid Weekly Event", "Desc", Recurrence.WEEKLY, null, Collections.emptySet(), null, null, false, null, "user2"
-        );
-
-        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalidWeeklyEvent));
-        verify(eventRepository, never()).save(any(Event.class));
     }
 
     @Test
@@ -136,142 +109,129 @@ class EventServiceImplTest {
                 NotificationType.EMAIL,
                 "user1"
         );
-        when(eventRepository.findById("1")).thenReturn(Optional.of(singleEvent));
-        when(eventRepository.save(any(Event.class))).thenReturn(updatedEventDetails);
+        when(eventRepository.existsById("1")).thenReturn(true);
+        when(eventRepository.save(any(Event.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Event result = eventService.updateEvent("1", updatedEventDetails);
 
         assertThat(result).isEqualTo(updatedEventDetails);
-        assertThat(result.getId()).isEqualTo("1"); // Ensure ID remains the same
-        verify(eventRepository, times(1)).findById("1");
+        assertThat(result.getId()).isEqualTo("1");
+        assertThat(result.getUpdatedAt()).isNotNull();
+        verify(eventRepository, times(1)).existsById("1");
         verify(eventRepository, times(1)).save(updatedEventDetails);
     }
 
     @Test
-    void shouldThrowEntityNotFoundExceptionWhenUpdatingNonExistentEvent() {
-        Event nonExistentEvent = new Event(
-                "99", "Non Existent", "Desc", Recurrence.SINGLE, LocalDate.now(), null, null, null, false, null, "user1"
-        );
-        when(eventRepository.findById("99")).thenReturn(Optional.empty());
+    void shouldThrowInvalidArgumentExceptionWhenCreatingSingleEventWithoutDate() {
+        Event invalid = new Event("3", "Invalid", "Desc", Recurrence.SINGLE, null, null, null, null, false, null, "user2");
+        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalid));
+        verify(eventRepository, never()).save(any());
+    }
 
-        assertThrows(EntityNotFoundException.class, () -> eventService.updateEvent("99", nonExistentEvent));
-        verify(eventRepository, times(1)).findById("99");
-        verify(eventRepository, never()).save(any(Event.class));
+    @Test
+    void shouldThrowInvalidArgumentExceptionWhenCreatingWeeklyEventWithoutDaysOfWeek() {
+        Event invalid = new Event("4", "Invalid", "Desc", Recurrence.WEEKLY, null, null, null, null, false, null, "user2");
+        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalid));
+        verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowInvalidArgumentExceptionWhenCreatingWeeklyEventWithEmptyDaysOfWeek() {
+        Event invalid = new Event("5", "Invalid", "Desc", Recurrence.WEEKLY, null, Collections.emptySet(), null, null, false, null, "user2");
+        assertThrows(InvalidArgumentException.class, () -> eventService.createEvent(invalid));
+        verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundExceptionWhenUpdatingNonExistentEvent() {
+        when(eventRepository.existsById("99")).thenReturn(false);
+        Event toUpdate = new Event("99", "Non Existent", "Desc", Recurrence.SINGLE, LocalDate.now(), null, null, null, false, null, "user1");
+        assertThrows(EntityNotFoundException.class, () -> eventService.updateEvent("99", toUpdate));
+        verify(eventRepository, times(1)).existsById("99");
+        verify(eventRepository, never()).save(any());
     }
 
     @Test
     void shouldThrowInvalidArgumentExceptionWhenUpdatingSingleEventWithoutDate() {
-        Event invalidUpdatedEvent = new Event(
-                "1", "Updated Invalid Single Event", "Desc", Recurrence.SINGLE, null, null, null, null, false, null, "user1"
-        );
-        when(eventRepository.findById("1")).thenReturn(Optional.of(singleEvent));
-
-        assertThrows(InvalidArgumentException.class, () -> eventService.updateEvent("1", invalidUpdatedEvent));
-        verify(eventRepository, times(1)).findById("1");
-        verify(eventRepository, never()).save(any(Event.class));
+        Event invalidUpdate = new Event("1", "Invalid", "Desc", Recurrence.SINGLE, null, null, null, null, false, null, "user1");
+        when(eventRepository.existsById("1")).thenReturn(true);
+        assertThrows(InvalidArgumentException.class, () -> eventService.updateEvent("1", invalidUpdate));
+        verify(eventRepository, times(1)).existsById("1");
+        verify(eventRepository, never()).save(any());
     }
 
     @Test
     void shouldGetEventByIdSuccessfully() {
         when(eventRepository.findById("1")).thenReturn(Optional.of(singleEvent));
-
         Optional<Event> result = eventService.getEventById("1");
-
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(singleEvent);
-        verify(eventRepository, times(1)).findById("1");
+        assertThat(result).isPresent().contains(singleEvent);
+        verify(eventRepository).findById("1");
     }
 
     @Test
-    void shouldThrowEntityNotFoundExceptionWhenGettingNonExistentEventById() {
+    void shouldThrowEntityNotFoundExceptionWhenGettingNonExistentEvent() {
         when(eventRepository.findById("99")).thenReturn(Optional.empty());
-
         assertThrows(EntityNotFoundException.class, () -> eventService.getEventById("99"));
-        verify(eventRepository, times(1)).findById("99");
+        verify(eventRepository).findById("99");
     }
 
     @Test
     void shouldGetAllEventsByUser() {
-        List<Event> userEvents = Arrays.asList(singleEvent, weeklyEvent);
-        when(eventRepository.findByUserId("user1")).thenReturn(userEvents);
-
-        List<Event> result = eventService.getAllEventsByUser("user1");
-
-        assertThat(result).hasSize(2).containsExactlyInAnyOrder(singleEvent, weeklyEvent);
-        verify(eventRepository, times(1)).findByUserId("user1");
+        when(eventRepository.findByUserId("user1")).thenReturn(List.of(singleEvent, weeklyEvent));
+        List<Event> events = eventService.getAllEventsByUser("user1");
+        assertThat(events).hasSize(2).containsExactlyInAnyOrder(singleEvent, weeklyEvent);
+        verify(eventRepository).findByUserId("user1");
     }
 
     @Test
     void shouldGetSingleEventsByDate() {
         LocalDate date = LocalDate.of(2025, 7, 30);
-        when(eventRepository.findByUserIdAndRecurrenceAndEventDate("user1", Recurrence.SINGLE, date))
-                .thenReturn(Collections.singletonList(singleEvent));
-
-        List<Event> result = eventService.getSingleEventsByDate("user1", date);
-
-        assertThat(result).hasSize(1).containsExactly(singleEvent);
-        verify(eventRepository, times(1)).findByUserIdAndRecurrenceAndEventDate("user1", Recurrence.SINGLE, date);
+        when(eventRepository.findByUserIdAndRecurrenceAndEventDate("user1", Recurrence.SINGLE, date)).thenReturn(List.of(singleEvent));
+        List<Event> events = eventService.getSingleEventsByDate("user1", date);
+        assertThat(events).containsExactly(singleEvent);
+        verify(eventRepository).findByUserIdAndRecurrenceAndEventDate("user1", Recurrence.SINGLE, date);
     }
 
     @Test
     void shouldGetWeeklyEventsByDayOfWeek() {
-        DayOfWeek day = DayOfWeek.MONDAY;
-        when(eventRepository.findByUserIdAndRecurrenceAndDaysOfWeekContaining("user1", Recurrence.WEEKLY, day))
-                .thenReturn(Collections.singletonList(weeklyEvent));
-
-        List<Event> result = eventService.getWeeklyEventsByDayOfWeek("user1", day);
-
-        assertThat(result).hasSize(1).containsExactly(weeklyEvent);
-        verify(eventRepository, times(1)).findByUserIdAndRecurrenceAndDaysOfWeekContaining("user1", Recurrence.WEEKLY, day);
+        when(eventRepository.findByUserIdAndRecurrenceAndDaysOfWeekContaining("user1", Recurrence.WEEKLY, DayOfWeek.MONDAY)).thenReturn(List.of(weeklyEvent));
+        List<Event> events = eventService.getWeeklyEventsByDayOfWeek("user1", DayOfWeek.MONDAY);
+        assertThat(events).containsExactly(weeklyEvent);
+        verify(eventRepository).findByUserIdAndRecurrenceAndDaysOfWeekContaining("user1", Recurrence.WEEKLY, DayOfWeek.MONDAY);
     }
 
     @Test
     void shouldGetAllWeeklyEventsByUser() {
-        when(eventRepository.findByUserIdAndRecurrence("user1", Recurrence.WEEKLY))
-                .thenReturn(Collections.singletonList(weeklyEvent));
-
-        List<Event> result = eventService.getAllWeeklyEventsByUser("user1");
-
-        assertThat(result).hasSize(1).containsExactly(weeklyEvent);
-        verify(eventRepository, times(1)).findByUserIdAndRecurrence("user1", Recurrence.WEEKLY);
+        when(eventRepository.findByUserIdAndRecurrence("user1", Recurrence.WEEKLY)).thenReturn(List.of(weeklyEvent));
+        List<Event> events = eventService.getAllWeeklyEventsByUser("user1");
+        assertThat(events).containsExactly(weeklyEvent);
+        verify(eventRepository).findByUserIdAndRecurrence("user1", Recurrence.WEEKLY);
     }
 
     @Test
     void shouldGetAllSingleEventsByMonth() {
-        int year = 2025;
-        int month = 7;
-        LocalDate startOfMonth = LocalDate.of(year, month, 1);
-        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
-
-        when(eventRepository.findByUserIdAndRecurrenceAndEventDateBetween(
-                eq("user1"), eq(Recurrence.SINGLE), eq(startOfMonth), eq(endOfMonth)))
-                .thenReturn(Collections.singletonList(singleEvent));
-
-        List<Event> result = eventService.getAllSingleEventsByMonth("user1", year, month);
-
-        assertThat(result).hasSize(1).containsExactly(singleEvent);
-        verify(eventRepository, times(1))
-                .findByUserIdAndRecurrenceAndEventDateBetween("user1", Recurrence.SINGLE, startOfMonth, endOfMonth);
+        int year = 2025, month = 7;
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        when(eventRepository.findByUserIdAndRecurrenceAndEventDateBetween("user1", Recurrence.SINGLE, start, end)).thenReturn(List.of(singleEvent));
+        List<Event> events = eventService.getAllSingleEventsByMonth("user1", year, month);
+        assertThat(events).containsExactly(singleEvent);
+        verify(eventRepository).findByUserIdAndRecurrenceAndEventDateBetween("user1", Recurrence.SINGLE, start, end);
     }
 
     @Test
     void shouldDeleteEventSuccessfully() {
         when(eventRepository.existsById("1")).thenReturn(true);
-        doNothing().when(eventRepository).deleteById("1");
-
         eventService.deleteEvent("1");
-
-        verify(eventRepository, times(1)).existsById("1");
-        verify(eventRepository, times(1)).deleteById("1");
+        verify(eventRepository).existsById("1");
+        verify(eventRepository).deleteById("1");
     }
 
     @Test
     void shouldThrowEntityNotFoundExceptionWhenDeletingNonExistentEvent() {
         when(eventRepository.existsById("99")).thenReturn(false);
-
         assertThrows(EntityNotFoundException.class, () -> eventService.deleteEvent("99"));
-
-        verify(eventRepository, times(1)).existsById("99");
-        verify(eventRepository, never()).deleteById(anyString());
+        verify(eventRepository).existsById("99");
+        verify(eventRepository, never()).deleteById(any());
     }
 }
