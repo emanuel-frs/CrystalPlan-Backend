@@ -1,8 +1,10 @@
 com/project/crystalplan/domain/services/NotificationService.class
+com/project/crystalplan/domain/services/TokenService.class
 com/project/crystalplan/domain/models/NotificationLog.class
 com/project/crystalplan/domain/models/Event.class
 com/project/crystalplan/domain/services/EventService.class
 com/project/crystalplan/domain/models/BaseModel.class
+com/project/crystalplan/domain/exceptions/InvalidCredentialsException.class
 com/project/crystalplan/domain/enums/NotificationStatus.class
 com/project/crystalplan/domain/exceptions/InvalidArgumentException.class
 com/project/crystalplan/domain/services/UserService.class
@@ -16,3 +18,4 @@ com/project/crystalplan/domain/exceptions/BusinessRuleException.class
 com/project/crystalplan/domain/models/NotificationSettings.class
 com/project/crystalplan/domain/repositories/EventRepository.class
 com/project/crystalplan/domain/models/User.class
+com/project/crystalplan/domain/services/AuthService.class

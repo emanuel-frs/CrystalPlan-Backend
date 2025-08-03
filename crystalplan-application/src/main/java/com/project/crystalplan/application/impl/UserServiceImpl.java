@@ -4,6 +4,7 @@ import com.project.crystalplan.domain.enums.NotificationType;
 import com.project.crystalplan.domain.enums.Recurrence;
 import com.project.crystalplan.domain.exceptions.EntityNotFoundException;
 import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
+import com.project.crystalplan.domain.exceptions.InvalidCredentialsException; // Importe esta exceção!
 import com.project.crystalplan.domain.models.Event;
 import com.project.crystalplan.domain.models.User;
 import com.project.crystalplan.domain.repositories.UserRepository;
@@ -42,11 +43,10 @@ public class UserServiceImpl implements UserService {
             throw new InvalidArgumentException("Já existe um usuário com este e-mail.");
         }
 
-        // Adicionando a lógica do BaseModel
         user.setUuid(UUID.randomUUID().toString());
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-        user.setActive(true); // Um novo usuário deve estar ativo por padrão
+        user.setActive(true);
 
         User createdUser = userRepository.save(user);
 
@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
         if (user.getEmail() == null || !EMAIL_REGEX.matcher(user.getEmail()).matches()) {
             throw new InvalidArgumentException("E-mail inválido ou não informado.");
         }
+        // A validação de senha pode ser mais robusta, mas aqui apenas verificamos se existe
         if (user.getPassword() == null || !PASSWORD_REGEX.matcher(user.getPassword()).matches()) {
             throw new InvalidArgumentException("A senha deve ter pelo menos 8 caracteres, incluindo letra, número e caractere especial.");
         }
@@ -93,7 +94,7 @@ public class UserServiceImpl implements UserService {
             );
 
             Event event = new Event(
-                    null, // O ID será gerado pelo BaseModel do Event
+                    null,
                     "Seu aniversário!!",
                     description,
                     Recurrence.SINGLE,
@@ -114,32 +115,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserById(String id) {
-        // Garantindo que apenas usuários ativos sejam retornados
-        return Optional.ofNullable(userRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado ou inativo")));
+        return userRepository.findByIdAndActiveTrue(id);
     }
 
     @Override
     public Optional<User> getUserByEmail(String email) {
-        // Garantindo que apenas usuários ativos sejam retornados
-        return Optional.ofNullable(userRepository.findByEmailAndActiveTrue(email)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o e-mail fornecido ou inativo")));
+        return userRepository.findByEmailAndActiveTrue(email);
     }
 
     @Override
     public User updateUser(String id, User user) {
         validateUser(user);
 
-        User existing = userRepository.findByIdAndActiveTrue(id) // Busca apenas usuários ativos
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado ou inativo"));
+        User existing = userRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para atualização ou inativo."));
 
-        // Atualiza os campos
         existing.setName(user.getName());
         existing.setEmail(user.getEmail());
         existing.setPassword(user.getPassword());
         existing.setBirthday(user.getBirthday());
 
-        // Atualiza o campo updatedAt
         existing.setUpdatedAt(LocalDateTime.now());
 
         return userRepository.save(existing);
@@ -148,9 +143,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String id) {
         User userToDelete = userRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado ou já inativo"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para exclusão ou já inativo."));
 
-        // Realiza o delete lógico
         userToDelete.setActive(false);
         userToDelete.setUpdatedAt(LocalDateTime.now());
         userRepository.save(userToDelete);
@@ -158,10 +152,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> login(String email, String password) {
-        User user = userRepository.findByEmailAndActiveTrue(email)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado ou inativo"));
+        Optional<User> userOptional = userRepository.findByEmailAndActiveTrue(email);
+
+        if (userOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        User user = userOptional.get();
         if (!user.getPassword().equals(password)) {
-            throw new InvalidArgumentException("Senha inválida.");
+            throw new InvalidCredentialsException("Senha inválida.");
         }
         return Optional.of(user);
     }

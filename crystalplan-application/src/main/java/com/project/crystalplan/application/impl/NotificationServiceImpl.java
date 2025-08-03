@@ -1,3 +1,5 @@
+// application/impl/NotificationServiceImpl.java
+
 package com.project.crystalplan.application.impl;
 
 import com.project.crystalplan.domain.services.NotificationService;
@@ -38,8 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
     // =========================
 
     @Override
-    public void saveNotificationLog(NotificationLog log) {
-        logRepository.save(log);
+    public NotificationLog saveNotificationLog(NotificationLog log) {
+        return logRepository.save(log);
     }
 
     @Override

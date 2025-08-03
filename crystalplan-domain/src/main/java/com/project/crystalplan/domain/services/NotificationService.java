@@ -1,3 +1,5 @@
+// domain/services/NotificationService.java
+
 package com.project.crystalplan.domain.services;
 
 import com.project.crystalplan.domain.models.NotificationSettings;
@@ -12,7 +14,8 @@ public interface NotificationService {
     NotificationSettings updateUserSettings(NotificationSettings settings);
 
     // Logs
-    void saveNotificationLog(NotificationLog log);
+    // MODIFICAÇÃO CHAVE AQUI: Agora retorna NotificationLog
+    NotificationLog saveNotificationLog(NotificationLog log);
     List<NotificationLog> getNotificationLogsByUserId(String userId);
     NotificationLog getNotificationLogById(String logId);
     List<NotificationLog> getLogsByEventId(String eventId);
