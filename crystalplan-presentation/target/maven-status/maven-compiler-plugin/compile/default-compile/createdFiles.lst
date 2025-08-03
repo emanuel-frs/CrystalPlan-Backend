@@ -1,4 +1,6 @@
+com/project/crystalplan/presentation/dtos/LoginResponse.class
 com/project/crystalplan/presentation/controller/NotificationController.class
+com/project/crystalplan/presentation/controller/AuthController.class
 com/project/crystalplan/presentation/dtos/LoginRequest.class
 com/project/crystalplan/presentation/controller/EventController.class
 com/project/crystalplan/CrystalPlanApplication.class

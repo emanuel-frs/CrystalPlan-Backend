@@ -14,3 +14,7 @@
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataNotificationLogMongoRepository.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataNotificationSettingsMongoRepository.java
 /home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/persistence/mongo/repository/springdata/SpringDataUserMongoRepository.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/security/JwtTokenService.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/security/SecurityConfig.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/security/jwt/JwtAuthenticationFilter.java
+/home/emanuel/Documentos/CrystalPlan/CrystalPlan-Backend/crystalplan-infrastructure/src/main/java/com/project/crystalplan/infrastructure/security/jwt/JwtTokenProvider.java

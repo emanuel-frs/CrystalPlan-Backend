@@ -3,6 +3,7 @@ package com.project.crystalplan.presentation.exceptions;
 import com.project.crystalplan.domain.exceptions.BusinessRuleException;
 import com.project.crystalplan.domain.exceptions.EntityNotFoundException;
 import com.project.crystalplan.domain.exceptions.InvalidArgumentException;
+import com.project.crystalplan.domain.exceptions.InvalidCredentialsException;
 import com.project.crystalplan.presentation.dtos.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -27,6 +28,47 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleEntityNotFound(
+            EntityNotFoundException ex, HttpServletRequest request) {
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso não encontrado",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidArgument(
+            InvalidArgumentException ex, HttpServletRequest request) {
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Argumento inválido",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // --- NOVO HANDLER PARA INVALIDCREDENTIALSEXCEPTION ---
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentials(
+            InvalidCredentialsException ex, HttpServletRequest request) {
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(), // Status 401 Unauthorized
+                "Credenciais inválidas",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+    // ---------------------------------------------------
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleValidationExceptions(
@@ -216,8 +258,8 @@ public class GlobalExceptionHandler {
 
         String mensagem = "Corpo da requisição inválido. Verifique o formato dos dados.";
 
-        if (ex.getCause() != null) {
-            mensagem = ex.getCause().getMessage();
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+            mensagem = "Formato JSON inválido: " + ex.getCause().getMessage();
         }
 
         ApiErrorResponse response = new ApiErrorResponse(
@@ -245,6 +287,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ApiErrorResponse> handleBusinessRule(BusinessRuleException ex, HttpServletRequest request) {
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Regra de negócio violada",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleAllExceptions(
             Exception ex, HttpServletRequest request) {
@@ -258,41 +312,4 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest request) {
-        ApiErrorResponse response = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                "Entidade não encontrada",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(BusinessRuleException.class)
-    public ResponseEntity<ApiErrorResponse> handleBusinessRule(BusinessRuleException ex, HttpServletRequest request) {
-        ApiErrorResponse response = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                "Regra de negócio violada",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(InvalidArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleInvalidArgument(InvalidArgumentException ex, HttpServletRequest request) {
-        ApiErrorResponse response = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Argumento inválido",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
 }

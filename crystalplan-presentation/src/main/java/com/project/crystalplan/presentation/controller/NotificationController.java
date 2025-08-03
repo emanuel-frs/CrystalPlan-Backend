@@ -40,8 +40,9 @@ public class NotificationController {
 
     @PostMapping("/logs")
     public ResponseEntity<NotificationLog> createLog(@Valid @RequestBody NotificationLog log) {
-        notificationService.saveNotificationLog(log);
-        return ResponseEntity.created(URI.create("/api/notifications/logs/" + log.getId())).body(log);
+        NotificationLog savedLog = notificationService.saveNotificationLog(log);
+        return ResponseEntity.created(URI.create("/api/notifications/logs/" + savedLog.getId()))
+                .body(savedLog);
     }
 
     @GetMapping("/logs/user/{userId}")
